@@ -1,22 +1,41 @@
 DeepNeuralNetworks4R
 ================
-Óscar González-Velasco
+Regression algorithm package based on _**Deep Neural Networks**_ for Omic data prediction in brain transcriptomics (although as a regression model, it can be applied to **any** problem with a dependent continuous variable).
 
-================ Implementation of *Deep Neural Networks* in R programing language. ----------------
+Developer: Óscar González-Velasco [oscargv@usal.es] - _Bioinformatics and functional genomics group, Cancer Research Center Salamanca (CIC-IBMCC)_
 
-Regression algorithm for Omic data prediction in brain transcriptomics (although as a regression model, it can be applied to **any** problem with a dependent continuous variable).
+Citing this package: _Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, <https://doi.org/10.1016/j.bbagrm.2020.194491>_
 
-We will use **a set of transcriptomic data from human brain samples** included on the package as an example of a **regression** model using *deep neural networks* to predict the biological age:
+
+Installation
+-----------------------------
+
+1. The package binaries are available for download on github:
+https://github.com/OscarGVelasco/DeepNeuralNetworks4R/blob/master/DeepNeuralNetworks4R_0.1.0.tar.gz
+``` r
+install.packages("DeepNeuralNetworks4R_0.1.0.tar.gz")
+```
+2. Or by installing it using devtools:
+``` r
+install_github("OscarGVelasco/DeepNeuralNetworks4R")
+```  
+
+Example using the data available inside the package
+-----------------------------
+
+We will use **a set of transcriptomic data from human brain samples** included on the package as an example of a **regression** model using *deep neural networks* to predict the biological age. It consist of 2 dataframes: training.data and test.data, composed of gene signal (numeric) and age of every individual:
 
 ``` r
 # We load the Deep Neural Network package:
 library(DeepNeuralNetworks4R)
 ```
 
-We will try to predict the age of the individuals based on the gene expression of 1078 genes selected because of its implications on brain aging on cortex region (Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, <https://doi.org/10.1016/j.bbagrm.2020.194491>).
+We will try to predict the age of the individuals based on the gene expression of 1078 genes selected because of its implications on brain aging on cortex region (_Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, <https://doi.org/10.1016/j.bbagrm.2020.194491>_).
 
 ``` r
 # We inspectionate the data included within the package:
+# rows corresponding to gene ENSEMBL id's and age being the last row
+# columns corresponding to sample id's
 training.data[1:5,1:5]
 ```
 
@@ -84,7 +103,7 @@ model <- deepNeuralNetwork.build(
             outputNeurons = 1,
             HidenLayerNeurons = c(20,20,20,10,10,10,10,10,10,10,10,10,10,10,10,10,10,10),
             traindata=training.data,
-            drawDNN = 0,
+            drawDNN = FALSE,
             standarization = zscore.targets)
 ```
 
@@ -98,6 +117,8 @@ And now we train the deep neural network using the following code:
 
 ``` r
 # 3. train model
+# CHECK NUMBER OF ITERATIONS !
+# this may take a long time depending of the volume of the data and if GPU is being used or not.
 timeNN <- system.time(
   model.trained <- deepNeuralNetwork.training(
                         x=1:(nrow(training.data)-1),
@@ -105,7 +126,7 @@ timeNN <- system.time(
                         model = model, #ddn.model.in.use,
                         traindata=training.data,
                         testdata=test.data,
-                        iterations  = 1000,
+                        iterations  = 40000,
                         lr = 0.001,
                         reg = 0.001,
                         display=1000,
@@ -132,7 +153,7 @@ mplot_lineal(observed = test.data[nrow(test.data),],
              x.lab="chronological age (observed)",y.lab = "predicted bio-age (predicted)")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-5-1.png)
+![](README_files/figure-markdown_github/example.with.40k.iterations.test.data.png)
 
 Using GPU for large datasets
 ----------------------------

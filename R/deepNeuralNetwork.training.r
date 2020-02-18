@@ -53,7 +53,6 @@ deepNeuralNetwork.training <- function(x,y, model = NULL,
                                        # savePlotIteration = save the plot of each iteration as a .png image?
                                        savePlotIteration = FALSE)
 {
-  # traindata <- data
   # total number of training set
   if(!class(model) == "DeepNNModel"){error("The Deep NN Model is not of class: \"DeepNNModel\"")}
   else{model@training <- list(iterations = iterations,learning.rate = lr, regularization.rate = reg)}
@@ -302,14 +301,9 @@ deepNeuralNetwork.training <- function(x,y, model = NULL,
   #############################################
   # Final results, statistics and memory release #
   cat("Total Data Loss MSE:", loss, "\n")
-  residuals <- Y - y_DNNoutput
-  res.std <- (residuals - mean(residuals))/sd(residuals)
   dev.set(1)
-  plot(y_DNNoutput,res.std,
-       xlab = "Predicted Values", ylab = "Standarized Residuals",
-       main = "Residuals Plot vs Predicted Values")
-  mtext(paste("Iteration:",i,"Loss:",round(loss, digits = 4),sep = " "))
-  abline(0,0)
+  print(residuals_plot(observed = Y,
+                 predicted = y_DNNoutput))
   # Returning the trained model (Wn)
   model@dnn <- Wn
   model@error <- loss
@@ -323,5 +317,3 @@ deepNeuralNetwork.training <- function(x,y, model = NULL,
   message("\n Finished training. Returning Deep Neural Network model.\n")
   return(model)
 }
-
-
