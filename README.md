@@ -11,14 +11,14 @@ Installation
 -----------------------------
 
 1. The package binaries are available for download on github:
-https://github.com/jdelasrivas-lab/RdeeplearningNN-bioage/blob/master/DeepNeuralNetworks4R_0.1.0.tar.gz
+https://github.com/OscarGVelasco/DeepNeuralNetworks4R/blob/master/DeepNeuralNetworks4R_0.1.0.tar.gz
 ``` r
 install.packages("DeepNeuralNetworks4R_0.1.0.tar.gz")
 ```
 2. Or by installing it using devtools:
 ``` r
-install_github("jdelasrivas-lab/RdeeplearningNN-bioage")
-```
+install_github("OscarGVelasco/DeepNeuralNetworks4R")
+```  
 
 Example using the data available inside the package
 -----------------------------
