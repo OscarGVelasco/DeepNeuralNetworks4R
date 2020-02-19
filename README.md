@@ -168,8 +168,8 @@ Using **mplot\_linear** function included in the package we can plot the perform
 ``` r
 mplot_lineal(observed = test.data[nrow(test.data),],
              predicted = age.prediction,
-             title = "Biological age prediction using DNN regression from human brain data",
-             x.lab="chronological age (years)",y.lab = "transcriptomic age")
+             title = "Biological age prediction using DNN regression \nfrom human brain data",
+             x.lab="chronological age (observed)",y.lab = "predicted bio-age (predicted)")
 ```
 
 ![](README_files/figure-markdown_github/example.with.10k.iterations.test.data.png)
