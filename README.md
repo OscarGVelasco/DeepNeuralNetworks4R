@@ -129,7 +129,7 @@ timeNN <- system.time(
                         model = model, #ddn.model.in.use,
                         traindata=training.data,
                         testdata=test.data,
-                        iterations  = 40000,
+                        iterations  = 10000,
                         lr = 0.001,
                         reg = 0.001,
                         display=1000,
@@ -172,7 +172,7 @@ mplot_lineal(observed = test.data[nrow(test.data),],
              x.lab="chronological age (years)",y.lab = "transcriptomic age")
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-8-1.png)
+![](README_files/figure-markdown_github/example.with.10k.iterations.test.data.png)
 
 We can also plot the residuals from the results of the regression model (a good model will produce random residuals); it also shows the labels of the detected outliers (we consider a studentized residual an outlier if &gt; 1.5\*IQR):
 
@@ -181,7 +181,7 @@ residuals_plot(observed = test.data[nrow(test.data),],
                predicted = age.prediction)
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-9-1.png)
+![](README_files/figure-markdown_github/example.of.residuals.png)
 
 Using GPU for large datasets
 ----------------------------
