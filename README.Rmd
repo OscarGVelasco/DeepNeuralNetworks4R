@@ -8,21 +8,39 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+DeepNeuralNetworks4R
 ================
-Implementation of _Deep Neural Networks_ in R programing language.
-----------------
+Regression algorithm package based on _**Deep Neural Networks**_ for Omic data prediction in brain transcriptomics (although as a regression model, it can be applied to **any** problem with a dependent continuous variable).
 
-Regression algorithm for Omic data prediction in brain transcriptomics (although as a regression model, it can be applied to **any** problem with a dependent continuous variable).
+Developer: Óscar González-Velasco [oscargv@usal.es] - _Bioinformatics and functional genomics group, Cancer Research Center Salamanca (CIC-IBMCC)_
 
-We will use *_a set of transcriptomic data from human brain samples_* included on the package as an example of a *_regression_* model using *deep neural networks* to predict the biological age:
+Citing this package: _Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, <https://doi.org/10.1016/j.bbagrm.2020.194491>_
+
+
+Installation
+-----------------------------
+
+1. The package binaries are available for download on github:
+https://github.com/OscarGVelasco/DeepNeuralNetworks4R/blob/master/DeepNeuralNetworks4R_0.1.0.tar.gz
+```{r eval=F}
+install.packages("DeepNeuralNetworks4R_0.1.0.tar.gz")
+```
+2. Or by installing it using devtools:
+```{r eval=F}
+install_github("OscarGVelasco/DeepNeuralNetworks4R")
+```  
+
+Example using the data available inside the package
+-----------------------------
+
+We will use **a set of transcriptomic data from human brain samples** included on the package as an example of a **regression** model using *deep neural networks* to predict the biological age. It consist of 2 dataframes: training.data and test.data, composed of gene signal (numeric) and age of every individual:
 
 ```{r }
 # We load the Deep Neural Network package:
 library(DeepNeuralNetworks4R)
-
 ```
 
-We will try to predict the age of the individuals based on the gene expression of 1078 genes selected because of its implications on brain aging on cortex region (Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, https://doi.org/10.1016/j.bbagrm.2020.194491).
+We will try to predict the age of the individuals based on the gene expression of 1078 genes selected because of its implications on brain aging on cortex region (_Oscar González-Velasco, et al., BBA - Gene Regulatory Mechanisms, <https://doi.org/10.1016/j.bbagrm.2020.194491>_).
 
 ```{r }
 # We inspectionate the data included within the package:
@@ -52,14 +70,15 @@ model <- deepNeuralNetwork.build(
             standarization = zscore.targets)
 ```
 
-*_x_* will specify the index positions of our explanatory variables on the matrix _training.data_
-*_y_* will specify the index positions of our observed variable on the matrix _training.data_, here it will correspond with the age.
+*_x_* will specify the index positions (**row numbers**) of our explanatory variables on the matrix _training.data_
+
+*_y_* will specify the index positions (**row numbers**) of our observed variable on the matrix _training.data_, here it will correspond with the age.
 
 *_HidenLayerNeurons_* will specify the number of neurons that each layer will have. The number of neurons on the very first layer will be the number of variables that we will use to create the regression model (deepNeuralNetwork.build calculate this automatically based on the x parameter).
 
 *_deepNeuralNetwork.build_* will create an object of class _DeepNNModel_ that will store all the information about the dnn model.
 
-And now we train the deep neural network using the following code:
+We train the deep neural network using the following code:
 
 ```{r, message=FALSE}
 # 3. train model
@@ -70,7 +89,7 @@ timeNN <- system.time(
                         model = model, #ddn.model.in.use,
                         traindata=training.data,
                         testdata=test.data,
-                        iterations  = 1000,
+                        iterations  = 100,
                         lr = 0.001,
                         reg = 0.001,
                         display=1000,
@@ -83,21 +102,30 @@ timeNN <- system.time(
 
 Once we have the model, we will make use of *_deepNeuralNetwork.predict_* function to predict a variable based on the trained regression model:
 
-```{r message = FALSE,fig.dim = c(10, 10)}
+```{r }
 
 age.prediction <- deepNeuralNetwork.predict(model.trained = model.trained,
                                             data = test.data[-nrow(test.data),],
                                             standarization = zscore.targets)
+```
 
+Using *_mplot_linear_* function included in the package we can plot the performance of our results obtained from the regression model.
 
+```{r, message = FALSE,fig.dim = c(10, 10)}
 mplot_lineal(observed = test.data[nrow(test.data),],
              predicted = age.prediction,
              title = "Biological age prediction using DNN regression from human brain data",
-             x.lim = c(1,7),
-             y.lim = c(1,7),
-             x.lab="chronological age (observed)",y.lab = "predicted bio-age (predicted)")
-
+             x.lab="chronological age (years)",y.lab = "transcriptomic age")
 ```
+
+We can also plot the residuals from the results of the regression model (a good model will produce random residuals); it also shows the labels of the detected outliers (we consider a studentized residual an outlier if > 1.5*IQR):
+
+```{r, message = FALSE,fig.dim = c(10, 10)}
+
+residuals_plot(observed = test.data[nrow(test.data),],
+               predicted = age.prediction)
+```
+
 
 ## Using GPU for large datasets
 
